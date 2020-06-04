@@ -1,5 +1,6 @@
 package com.maciejwalkowiak.reactorsqs.sqs;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ public class SqsProperties {
 
 	public static class DefaultListenerProperties {
 		private Region region;
+		private URI endpoint;
 		private SqsMessageDeletionPolicy deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS;
 		private int maxThreads = 20;
 		private int maxTasks = 200;
@@ -69,6 +71,7 @@ public class SqsProperties {
 			target.setMaxNumberOfMessages(listenerProperties.getMaxNumberOfMessages());
 			target.setVisibilityTimeout(listenerProperties.getVisibilityTimeout());
 			target.setWaitTimeSeconds(listenerProperties.getWaitTimeSeconds());
+			target.setEndpoint(listenerProperties.getEndpoint() != null ? listenerProperties.getEndpoint() : this.endpoint);
 			return target;
 		}
 
@@ -86,6 +89,14 @@ public class SqsProperties {
 
 		public void setRegion(Region region) {
 			this.region = region;
+		}
+
+		public URI getEndpoint() {
+			return endpoint;
+		}
+
+		public void setEndpoint(URI endpoint) {
+			this.endpoint = endpoint;
 		}
 
 		public int getMaxThreads() {

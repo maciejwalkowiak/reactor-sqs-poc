@@ -1,13 +1,25 @@
 cloud:
   aws:
     sqs:
-      enabled: true # turn off/on SQS integration
-      default-listener: # default properties applied to all listeners if not specified otherwise
+      # turn off/on SQS integration (true by default)
+      enabled: true
+      # default properties applied to all listeners if not specified otherwise
+      default-listener:
+        # default region, if not specified region will be resolved using DefaultAwsRegionProviderChain
         region: eu-west-1
+        # specify endpoint for testing with Localstack or using VPC endpoints in AWS
+        endpoint: http://localhost:4567
         visibility-timeout: 10
+        deletion-policy: on_success
+        wait-time-seconds: 5
+        max-threads: 20
+        max-tasks: 200
+        max-number-of-messages: 20
       listeners:
-        myListener-handle: # bean name + method name or @SqsListener value
+        # bean name + method name or @SqsListener value
+        myListener-handle:
           queueName: my-new-queue
+          # each listener can overwrite properties from default-listener
           visibility-timeout: 5
           region: eu-central-1
         secondListener-handle:
