@@ -1,4 +1,4 @@
-package com.maciejwalkowiak.reactorsqs;
+package com.maciejwalkowiak.reactorsqs.sqs;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,6 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface SqsListener {
-	String value();
-	SqsMessageDeletionPolicy deletionPolicy() default SqsMessageDeletionPolicy.ON_SUCCESS;
+	String value() default "";
 }

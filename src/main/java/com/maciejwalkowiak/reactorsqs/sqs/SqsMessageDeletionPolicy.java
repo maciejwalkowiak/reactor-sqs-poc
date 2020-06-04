@@ -1,4 +1,4 @@
-package com.maciejwalkowiak.reactorsqs;
+package com.maciejwalkowiak.reactorsqs.sqs;
 
 public enum SqsMessageDeletionPolicy {
 	ALWAYS,

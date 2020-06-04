@@ -1,0 +1,14 @@
+cloud:
+  aws:
+    sqs:
+      enabled: true # turn off/on SQS integration
+      default-listener: # default properties applied to all listeners if not specified otherwise
+        region: eu-west-1
+        visibility-timeout: 10
+      listeners:
+        myListener-handle: # bean name + method name or @SqsListener value
+          queueName: my-new-queue
+          visibility-timeout: 5
+          region: eu-central-1
+        secondListener-handle:
+          queueName: my-second-queue

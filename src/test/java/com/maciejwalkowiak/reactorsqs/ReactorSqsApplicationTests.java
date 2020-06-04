@@ -11,4 +11,5 @@ class ReactorSqsApplicationTests {
 	void contextLoads() {
 
 	}
+
 }

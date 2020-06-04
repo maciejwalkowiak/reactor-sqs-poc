@@ -1,10 +1,11 @@
-package com.maciejwalkowiak.reactorsqs;
+package com.maciejwalkowiak.reactorsqs.sqs;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.maciejwalkowiak.reactorsqs.sqs.SqsProperties.ListenerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
@@ -21,10 +22,12 @@ public class SqsMessageHandler implements BeanPostProcessor, DisposableBean {
 	private final SqsAsyncClient sqs;
 	private final List<SqsListenerContainer> containers = new ArrayList<>();
 	private final SqsProperties sqsProperties;
+	private final ListenerNameResolver listenerNameResolver;
 
-	public SqsMessageHandler(SqsAsyncClient sqs, SqsProperties sqsProperties) {
+	public SqsMessageHandler(SqsAsyncClient sqs, SqsProperties sqsProperties, ListenerNameResolver listenerNameResolver) {
 		this.sqs = sqs;
 		this.sqsProperties = sqsProperties;
+		this.listenerNameResolver = listenerNameResolver;
 	}
 
 	@Override
@@ -33,15 +36,16 @@ public class SqsMessageHandler implements BeanPostProcessor, DisposableBean {
 				(MethodFilter) method -> method.isAnnotationPresent(SqsListener.class));
 
 		for (Method method : methods) {
-			String listenerName = beanName + "#" + method.getName();
+			SqsListener declaredAnnotation = method.getDeclaredAnnotation(SqsListener.class);
+			String listenerName = listenerNameResolver.resolve(beanName, method.getName(), declaredAnnotation);
+			ListenerProperties listenerProperties = sqsProperties.getListenerProperties(listenerName);
 			logger.info("Registering SqsListenerContainer: {}", listenerName);
 			SqsListenerContainer container = new SqsListenerContainer(
 					listenerName,
-					method.getDeclaredAnnotation(SqsListener.class),
+					listenerProperties,
 					sqs,
 					bean,
-					method,
-					sqsProperties
+					method
 			);
 			container.register();
 			containers.add(container);
