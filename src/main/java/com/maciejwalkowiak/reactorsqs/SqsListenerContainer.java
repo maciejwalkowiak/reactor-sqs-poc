@@ -50,8 +50,8 @@ public class SqsListenerContainer implements DisposableBean {
 		this.disposable = Mono.fromFuture(this::receiveMessages)
 				.doOnNext(response -> logger.info("Received {} messages", response.messages().size()))
 				.flatMapIterable(ReceiveMessageResponse::messages)
-				.publishOn(scheduler)
 				.repeat()
+				.publishOn(scheduler)
 				.flatMap(m -> Mono.defer(() -> {
 					try {
 						targetMethod.invoke(target, m);
